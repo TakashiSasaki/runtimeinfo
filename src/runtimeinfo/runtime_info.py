@@ -1,5 +1,6 @@
 import os
 import socket
+import sys
 import uuid
 from typing import Optional, Any
 import json
@@ -13,12 +14,22 @@ import getpass
 class RuntimeInfo:
     """Information about a machine and path."""
 
+    __slots__ = (
+        "hostname",
+        "mac_address",
+        "ip_address",
+        "path",
+        "username",
+        "sys_platform",
+    )
+
     def __init__(self, path: Optional[str] = None) -> None:
         self.hostname: Optional[str] = None
         self.mac_address: Optional[str] = None
         self.ip_address: Optional[str] = None
         self.path: Optional[str] = None
         self.username: Optional[str] = None
+        self.sys_platform: Optional[str] = None
 
         try:
             self.hostname = socket.gethostname()
@@ -29,6 +40,11 @@ class RuntimeInfo:
             self.username = getpass.getuser()
         except Exception:
             self.username = None
+
+        try:
+            self.sys_platform = sys.platform
+        except Exception:
+            self.sys_platform = None
 
         try:
             node = uuid.getnode()
@@ -79,6 +95,7 @@ class RuntimeInfo:
             "mac_address": self.mac_address,
             "username": self.username,
             "path": self.path,
+            "sys_platform": self.sys_platform,
         }
         return jcs.canonicalize(data).decode("utf-8")
 
@@ -90,5 +107,6 @@ class RuntimeInfo:
             "mac_address": self.mac_address,
             "username": self.username,
             "path": self.path,
+            "sys_platform": self.sys_platform,
         }
         return json.dumps(data, ensure_ascii=False, indent=2)

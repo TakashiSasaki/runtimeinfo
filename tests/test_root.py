@@ -20,6 +20,7 @@ def test_root_basic(tmp_path):
     assert r.ip_address is None or isinstance(r.ip_address, str)
     assert r.mac_address is None or isinstance(r.mac_address, str)
     assert r.username is None or isinstance(r.username, str)
+    assert r.sys_platform == sys.platform
 
 
 def test_hostname_failure(monkeypatch):
@@ -39,6 +40,7 @@ def test_root_initialization():
     root = RuntimeInfo()
     assert root.hostname == socket.gethostname()
     assert root.username == getpass.getuser()
+    assert root.sys_platform == sys.platform
 
 
 def test_root_default_path():
@@ -63,6 +65,7 @@ def test_to_json(tmp_path):
     data = json.loads(js)
     assert data['path'] == str(tmp_path)
     assert data['username'] == r.username
+    assert data['sys_platform'] == sys.platform
     assert js == jcs.canonicalize(data).decode('utf-8')
 
 
@@ -72,6 +75,7 @@ def test_str(tmp_path):
     data = json.loads(s)
     assert data['path'] == str(tmp_path)
     assert data['username'] == r.username
+    assert data['sys_platform'] == sys.platform
 
 
 def test_exclude_loopback(monkeypatch):
